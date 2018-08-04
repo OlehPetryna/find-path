@@ -9,10 +9,7 @@ class CellTest extends TestCase
 {
     public function testCreation(): void
     {
-        $c = $this->getMockBuilder(Cell::class)
-            ->setConstructorArgs([10, 20])
-            ->getMock();
-
+        $c = new Cell(10, 20);
         $this->assertAttributeEquals([10, 20], "coords", $c);
     }
 }

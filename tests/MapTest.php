@@ -10,15 +10,25 @@ class MapTest extends TestCase
 {
     public function testCreation(): void
     {
-        $m = $this->getMockBuilder(Map::class)
-            ->setConstructorArgs([125, 130])
-            ->getMock();
+        $m = new Map(125, 130);
 
         $this->assertAttributeEquals([125, 130], "size", $m);
 
-        $m0 = $this->getMockBuilder(Map::class)
-            ->getMock();
+        $m0 = new Map();
 
         $this->assertAttributeEquals([100, 100], "size", $m0);
+    }
+
+    public function testGenerateCount(): void
+    {
+        $m = new Map();
+        $m->generate();
+
+        $this->assertAttributeCount(10000, "cells", $m);
+
+        $m0 = new Map(5, 5);
+        $m0->generate();
+
+        $this->assertAttributeCount(25, "cells", $m0);
     }
 }
