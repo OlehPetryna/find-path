@@ -18,18 +18,26 @@ class Cell
         $this->coords = [$x, $y];
     }
 
-    public static function createWall(int $x, int $y): self
+    public static function createWall(Coordinates $coordinates): self
     {
-        $c = new self($x, $y);
+        $c = new self($coordinates->getX(), $coordinates->getY());
         $c->type = self::TYPE_WALL;
 
         return $c;
     }
 
-    public static function createPassage(int $x, int $y): self
+    public static function createPassage(Coordinates $coordinates): self
     {
-        $c = new self($x, $y);
+        $c = new self($coordinates->getX(), $coordinates->getY());
         $c->type = self::TYPE_PASSAGE;
+
+        return $c;
+    }
+
+    public static function createDestroyedWall(Coordinates $coordinates): self
+    {
+        $c = new self($coordinates->getX(), $coordinates->getY());
+        $c->type = self::TYPE_DESTROYED_WALL;
 
         return $c;
     }

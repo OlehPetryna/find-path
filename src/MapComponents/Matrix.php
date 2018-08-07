@@ -9,19 +9,17 @@ class Matrix implements \Iterator
     private $matrix = [];
 
     private $position = 0;
-    private $count;
+    private $count = [];
 
-    public function set(int $row, int $col, Cell $c): void
+    public function set(Coordinates $coordinates, Cell $c): void
     {
+        if (!isset($this->matrix[$coordinates->getRow()]))
+            $this->matrix[$coordinates->getRow()] = [];
 
-        if (!isset($this->matrix[$row]))
-            $this->matrix[$row] = [];
+        if (!isset($this->matrix[$coordinates->getRow()][$coordinates->getCol()]))
+            $this->count[$c->type] = isset($this->count[$c->type]) ? ++$this->count[$c->type] : 1;
 
-
-        if (!isset($this->matrix[$row][$col]))
-            ++$this->count;
-
-        $this->matrix[$row][$col] = $c;
+        $this->matrix[$coordinates->getRow()][$coordinates->getCol()] = $c;
     }
 
     public function get(int $row, int $col): ?Cell
@@ -32,9 +30,12 @@ class Matrix implements \Iterator
         return $this->matrix[$row][$col];
     }
 
-    public function count(): int
+    public function count(int $type = -1): int
     {
-        return $this->count;
+        if ($type === -1)
+            return array_sum($this->count);
+
+        return $this->count[$type] ?? 0;
     }
 
     /**
@@ -83,7 +84,6 @@ class Matrix implements \Iterator
                 && !$c->equals($cell)
                 && !isset($exclude[$cell->getUniqueKey()])) {
 
-                echo "found neib for {$c->getY()} {$c->getX()} $c->type == {$cell->getY()} {$cell->getX()} $cell->type\n";
                 return $cell;
             }
         }

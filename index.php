@@ -5,7 +5,7 @@ use App\Map;
 
 require "vendor/autoload.php";
 
-$m = new Map(13, 13);
+$m = new Map(101, 101);
 $m->generate();
 
 \App\Console::drawMatrix($m->matrix);

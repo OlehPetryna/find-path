@@ -5,6 +5,7 @@ namespace App;
 
 use App\Console;
 use App\MapComponents\Cell;
+use App\MapComponents\Coordinates;
 use App\MapComponents\Matrix;
 
 /**
@@ -33,16 +34,11 @@ class Map
         $visited = [];
 
         $this->matrix = $this->createMatrix();
-        Console::drawMatrix($this->matrix);
-
         $startPoint = $this->matrix->get(1, 1);
         $visited[$startPoint->getUniqueKey()] = $startPoint;
 
         $currentPoint = $startPoint;
-        while (count($visited) < $this->matrix->count()) {
-
-            echo "visited: " . count($visited) . " " . $this->matrix->count() . "\n";
-
+        while (count($visited) < $this->matrix->count(Cell::TYPE_PASSAGE)) {
             /**@var Cell[] $neighbours*/
             $neighbours = $this->matrix->getNeighboursFor($currentPoint, $visited);
             $neighbours = array_filter($neighbours, function ($v) use ($visited) {
@@ -51,7 +47,6 @@ class Map
             });
 
             if (!empty($neighbours)) {
-                echo "1\n";
                 $movementStack->push($currentPoint);
                 $randIdx = array_keys($neighbours)[random_int(0, count($neighbours) - 1)];
                 $nextPoint = $neighbours[$randIdx];
@@ -59,17 +54,11 @@ class Map
                 $currentPoint = $nextPoint;
                 $visited[$currentPoint->getUniqueKey()] = $currentPoint;
             } elseif (!$movementStack->isEmpty()) {
-                echo "2\n";
                 $currentPoint = $movementStack->pop();
-
-                echo "backtrack: {$currentPoint->getY()} {$currentPoint->getX()}\n";
             } else {
-
-                Console::drawMatrix($this->matrix);
                 throw new \Exception("Unreachable statement");
             }
         }
-
     }
 
     private function pickRandomPassage(array $exclude) {
@@ -86,13 +75,17 @@ class Map
 
     private function removeWallsBetween(Cell $a, Cell $b): void
     {
-        $new = $a->getX() === $b->getX()
-            ? $this->matrix->get(min($a->getY(), $b->getY()) + abs($a->getY() - $b->getY()) - 1, $a->getX())
-            : $this->matrix->get($a->getY(), min($a->getX(), $b->getX()) + abs($a->getX() - $b->getX()) - 1);
+        $newCoordinates = $a->getX() === $b->getX()
+            ? Coordinates::fromArray([
+                'row' => min($a->getY(), $b->getY()) + abs($a->getY() - $b->getY()) - 1,
+                'col' => $a->getX()
+            ])
+            : Coordinates::fromArray([
+                'row' => $a->getY(),
+                'col' => min($a->getX(), $b->getX()) + abs($a->getX() - $b->getX()) - 1
+            ]);
 
-//        echo "removing wall between {$a->getY()} {$a->getX()} AND {$b->getY()} {$b->getX()} === {$new->getY()} {$new->getX()}\n";
-        $new->type = Cell::TYPE_DESTROYED_WALL;
-        $this->matrix->set($new->getY(), $new->getX(), $new);
+        $this->matrix->set($newCoordinates, Cell::createDestroyedWall($newCoordinates));
     }
 
     /**
@@ -105,13 +98,16 @@ class Map
         $matrix = new Matrix();
         for ($row = 0; $row < $this->getHeight(); $row++) {
             for ($col = 0; $col < $this->getWidth(); $col++) {
-                $matrix->set($row, $col,
+                $pair = Coordinates::fromArray([
+                    'row' => $row,
+                    'col' => $col
+                ]);
+                $matrix->set($pair,
                     $col % 2 !== 0 && $row % 2 !== 0 && $row < $this->getHeight() - 1 && $col < $this->getWidth() - 1
-                        ? Cell::createPassage($col, $row)
-                        : Cell::createWall($col, $row));
+                        ? Cell::createPassage($pair)
+                        : Cell::createWall($pair));
             }
         }
-
         return $matrix;
     }
 
