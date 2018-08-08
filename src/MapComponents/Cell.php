@@ -16,6 +16,7 @@ class Cell
     public function __construct(int $x, int $y, int $type)
     {
         $this->coords = [$x, $y];
+        $this->type = $type;
     }
 
     public static function createWall(Coordinates $coordinates): self
