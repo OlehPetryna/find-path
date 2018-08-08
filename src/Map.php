@@ -60,7 +60,7 @@ class Map
             }
         }
     }
-    
+
     private function removeWallsBetween(Cell $a, Cell $b): void
     {
         $newCoordinates = $a->getX() === $b->getX()

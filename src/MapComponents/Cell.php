@@ -13,33 +13,24 @@ class Cell
     const TYPE_PASSAGE = 2;
     const TYPE_DESTROYED_WALL = 3;
 
-    public function __construct(int $x, int $y)
+    public function __construct(int $x, int $y, int $type)
     {
         $this->coords = [$x, $y];
     }
 
     public static function createWall(Coordinates $coordinates): self
     {
-        $c = new self($coordinates->getX(), $coordinates->getY());
-        $c->type = self::TYPE_WALL;
-
-        return $c;
+        return new self($coordinates->getX(), $coordinates->getY(), self::TYPE_WALL);
     }
 
     public static function createPassage(Coordinates $coordinates): self
     {
-        $c = new self($coordinates->getX(), $coordinates->getY());
-        $c->type = self::TYPE_PASSAGE;
-
-        return $c;
+        return new self($coordinates->getX(), $coordinates->getY(), self::TYPE_PASSAGE);
     }
 
     public static function createDestroyedWall(Coordinates $coordinates): self
     {
-        $c = new self($coordinates->getX(), $coordinates->getY());
-        $c->type = self::TYPE_DESTROYED_WALL;
-
-        return $c;
+        return new self($coordinates->getX(), $coordinates->getY(), self::TYPE_DESTROYED_WALL);
     }
 
     public function isWall()
