@@ -60,19 +60,7 @@ class Map
             }
         }
     }
-
-    private function pickRandomPassage(array $exclude) {
-        $res = null;
-        while($res === null) {
-            $randX = random_int(0, $this->getWidth());
-            $randY = random_int(0, $this->getHeight());
-
-            $res = isset($exclude["{$randX}-{$randY}"]) ? null : $this->matrix->get($randY, $randX);
-        }
-
-        return $res;
-    }
-
+    
     private function removeWallsBetween(Cell $a, Cell $b): void
     {
         $newCoordinates = $a->getX() === $b->getX()
