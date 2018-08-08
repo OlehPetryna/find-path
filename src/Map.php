@@ -22,6 +22,8 @@ class Map
 
     public function __construct(int $width = 100, int $height = 100)
     {
+        $width = $width % 2 === 0 ? ++$width : $width;
+        $height = $height % 2 === 0 ? ++$height : $height;
         $this->size = [$width, $height];
     }
 
