@@ -56,7 +56,12 @@ class Cell
 
     public function getUniqueKey()
     {
-        return $this->getY() . "-" . $this->getX();
+        return self::generateUniqueKey($this->getY(), $this->getX());
+    }
+
+    public static function generateUniqueKey(int $row, int $col): string
+    {
+        return $row . "-" . $col;
     }
 
     public function equals(Cell $c)

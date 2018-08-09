@@ -8,6 +8,8 @@ class Matrix implements \Iterator
 {
     private $matrix = [];
 
+    private $matrixByCols = [];
+
     private $position = 0;
     private $count = [];
 
@@ -16,9 +18,13 @@ class Matrix implements \Iterator
         if (!isset($this->matrix[$coordinates->getRow()]))
             $this->matrix[$coordinates->getRow()] = [];
 
+        if (!isset($this->matrixByCols[$coordinates->getCol()]))
+            $this->matrixByCols[$coordinates->getCol()] = [];
+
         if (!isset($this->matrix[$coordinates->getRow()][$coordinates->getCol()]))
             $this->count[$c->type] = isset($this->count[$c->type]) ? ++$this->count[$c->type] : 1;
 
+        $this->matrixByCols[$coordinates->getCol()][$coordinates->getRow()] = $c;
         $this->matrix[$coordinates->getRow()][$coordinates->getCol()] = $c;
     }
 
@@ -62,9 +68,7 @@ class Matrix implements \Iterator
      */
     private function findClosestNeighbour(Cell $c, bool $direction, bool $reverse, array $exclude): ?Cell
     {
-        $haystack = $direction ? $this->matrix[$c->getY()] : array_map(function ($row) use ($c) {
-            return $row[$c->getX()];
-        }, $this->matrix);
+        $haystack = $direction ? $this->matrix[$c->getY()] : $this->matrixByCols[$c->getX()];
 
         $position = 0;
         foreach ($haystack as $idx => $cell) {

@@ -40,9 +40,12 @@ class Map
         $visited[$startPoint->getUniqueKey()] = $startPoint;
 
         $currentPoint = $startPoint;
-        while (count($visited) < $this->matrix->count(Cell::TYPE_PASSAGE)) {
+
+        $targetCount = $this->matrix->count(Cell::TYPE_PASSAGE);
+        while (count($visited) < $targetCount) {
             /**@var Cell[] $neighbours*/
             $neighbours = $this->matrix->getNeighboursFor($currentPoint, $visited);
+
             $neighbours = array_filter($neighbours, function ($v) use ($visited) {
                 /**@var Cell|null $v */
                 return $v !== null;
@@ -50,8 +53,7 @@ class Map
 
             if (!empty($neighbours)) {
                 $movementStack->push($currentPoint);
-                $randIdx = array_keys($neighbours)[random_int(0, count($neighbours) - 1)];
-                $nextPoint = $neighbours[$randIdx];
+                $nextPoint = $neighbours[array_keys($neighbours)[random_int(0, count($neighbours) - 1)]];
                 $this->removeWallsBetween($currentPoint, $nextPoint);
                 $currentPoint = $nextPoint;
                 $visited[$currentPoint->getUniqueKey()] = $currentPoint;
