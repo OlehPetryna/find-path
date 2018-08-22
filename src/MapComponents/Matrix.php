@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace App\MapComponents;
 
 
+use App\VisitedList;
+
 class Matrix implements \Iterator
 {
     private $matrix = [];
@@ -46,10 +48,10 @@ class Matrix implements \Iterator
 
     /**
      * @param Cell $c
-     * @param Cell[] $exclude
+     * @param VisitedList $exclude
      * @return Cell|null[]
      */
-    public function getNeighboursFor(Cell $c, array $exclude): array
+    public function getNeighboursFor(Cell $c, VisitedList $exclude): array
     {
         return [
             $this->findClosestNeighbour($c, true, false, $exclude),
@@ -63,10 +65,10 @@ class Matrix implements \Iterator
      * @param Cell $c
      * @param bool $direction true to search in the same row, false to search in the same column
      * @param bool $reverse false to search from cells before provided cell, true to search starting from cells after provided cell
-     * @param Cell[] $exclude
+     * @param VisitedList $exclude
      * @return Cell|null
      */
-    private function findClosestNeighbour(Cell $c, bool $direction, bool $reverse, array $exclude): ?Cell
+    private function findClosestNeighbour(Cell $c, bool $direction, bool $reverse, VisitedList $exclude): ?Cell
     {
         $haystack = $direction ? $this->matrix[$c->getY()] : $this->matrixByCols[$c->getX()];
 
@@ -86,7 +88,7 @@ class Matrix implements \Iterator
             if (abs($cell->getY() - $c->getY()) <= 2 && abs($cell->getX() - $c->getX()) <= 2
                 && $cell->type === $c->type
                 && !$c->equals($cell)
-                && !isset($exclude[$cell->getUniqueKey()])) {
+                && !$exclude->contains($cell)) {
 
                 return $cell;
             }

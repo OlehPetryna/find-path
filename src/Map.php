@@ -14,11 +14,16 @@ use App\MapComponents\Matrix;
  *
  * @property int[] $size
  * @property Matrix $matrix
+ * @property Cell $startPoint
+ * @property Cell $endPoint
  */
 class Map
 {
     private $size;
     public $matrix = [];
+
+    private $startPoint;
+    private $endPoint;
 
     public function __construct(int $width = 100, int $height = 100)
     {
@@ -29,55 +34,56 @@ class Map
 
     /**
      * Generates labyrinth
+     * @throws \Exception
      */
     public function generate()
     {
-        $movementStack = new \SplStack();
-        $visited = [];
-
         $this->matrix = $this->createMatrix();
-        $startPoint = $this->matrix->get(1, 1);
-        $visited[$startPoint->getUniqueKey()] = $startPoint;
 
-        $currentPoint = $startPoint;
+        $this->startPoint =$this->pickStartPoint($this->matrix);
+        $this->endPoint = $this->pickEndPoint($this->matrix);
 
-        $targetCount = $this->matrix->count(Cell::TYPE_PASSAGE);
-        while (count($visited) < $targetCount) {
-            /**@var Cell[] $neighbours*/
-            $neighbours = $this->matrix->getNeighboursFor($currentPoint, $visited);
+        $generator = new MazeGenerator();
 
-            $neighbours = array_filter($neighbours, function ($v) use ($visited) {
-                /**@var Cell|null $v */
-                return $v !== null;
-            });
-
-            if (!empty($neighbours)) {
-                $movementStack->push($currentPoint);
-                $nextPoint = $neighbours[array_keys($neighbours)[random_int(0, count($neighbours) - 1)]];
-                $this->removeWallsBetween($currentPoint, $nextPoint);
-                $currentPoint = $nextPoint;
-                $visited[$currentPoint->getUniqueKey()] = $currentPoint;
-            } elseif (!$movementStack->isEmpty()) {
-                $currentPoint = $movementStack->pop();
-            } else {
-                throw new \Exception("Unreachable statement");
-            }
-        }
+        $this->matrix = $generator->generate($this->matrix, $this->startPoint);
     }
 
-    private function removeWallsBetween(Cell $a, Cell $b): void
+    private function pickStartPoint(Matrix $m): Cell
     {
-        $newCoordinates = $a->getX() === $b->getX()
-            ? Coordinates::fromArray([
-                'row' => min($a->getY(), $b->getY()) + abs($a->getY() - $b->getY()) - 1,
-                'col' => $a->getX()
-            ])
-            : Coordinates::fromArray([
-                'row' => $a->getY(),
-                'col' => min($a->getX(), $b->getX()) + abs($a->getX() - $b->getX()) - 1
-            ]);
+        //picking always from higher-left quarter of matrix
+        $point = null;
 
-        $this->matrix->set($newCoordinates, Cell::createDestroyedWall($newCoordinates));
+        $widthBoundary = (int)floor($this->getWidth() / 2);
+        $heightBoundary = (int)floor($this->getHeight() / 2);
+        while ($point === null) {
+            $row = random_int(1, $heightBoundary);
+            $col = random_int(1, $widthBoundary);
+
+            $cell = $m->get($row, $col);
+            if ($cell && $cell->isPassage())
+                $point = $cell;
+        }
+
+        return $point;
+    }
+
+    private function pickEndPoint(Matrix $m): Cell
+    {
+        //picking always from lower-right quarter of matrix
+        $point = null;
+
+        $widthBoundary = (int)floor($this->getWidth() / 2);
+        $heightBoundary =(int)floor($this->getHeight() / 2);
+        while ($point === null) {
+            $row = random_int($heightBoundary, $this->getHeight());
+            $col = random_int($widthBoundary, $this->getWidth());
+
+            $cell = $m->get($row, $col);
+            if ($cell && $cell->isPassage())
+                $point = $cell;
+        }
+
+        return $point;
     }
 
     /**
