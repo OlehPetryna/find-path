@@ -44,7 +44,6 @@ class Map
         $this->endPoint = $this->pickEndPoint($this->matrix);
 
         $generator = new MazeGenerator();
-
         $this->matrix = $generator->generate($this->matrix, $this->startPoint);
     }
 

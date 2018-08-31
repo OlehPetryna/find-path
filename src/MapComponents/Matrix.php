@@ -49,7 +49,7 @@ class Matrix implements \Iterator
     /**
      * @param Cell $c
      * @param VisitedList $exclude
-     * @return Cell|null[]
+     * @return Cell[]|null[]
      */
     public function getNeighboursFor(Cell $c, VisitedList $exclude): array
     {
@@ -75,8 +75,10 @@ class Matrix implements \Iterator
         $position = 0;
         foreach ($haystack as $idx => $cell) {
             /**@var Cell $cell */
-            if ($cell->equals($c))
+            if ($cell->equals($c)) {
                 $position = $idx;
+                break;
+            }
         }
 
         $haystack = $reverse
