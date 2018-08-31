@@ -66,6 +66,6 @@ class Cell
 
     public function equals(Cell $c)
     {
-        return $this->getY() === $c->getY() && $this->getX() === $c->getX();
+        return $this->getY() === $c->getY() && $this->getX() === $c->getX() && $this->type === $c->type;
     }
 }
