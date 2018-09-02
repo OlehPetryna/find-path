@@ -19,7 +19,7 @@ class Coordinates
     public function __construct(int $row, int $col)
     {
         if ($row < 0 || $col < 0)
-            throw new \InvalidArgumentException();
+            throw new \InvalidArgumentException($row . " - " . $col );
 
         $this->row = $row;
         $this->col = $col;

@@ -35,7 +35,7 @@ class MazeGenerator
 
         while ($this->hasNotProcessedCells($matrix)) {
             /**@var Cell[] $neighbours */
-            $neighbours = $matrix->getNeighboursFor($currentPoint, $this->visited);
+            $neighbours = $matrix->getNeighboursFor($currentPoint, $this->visited, false);
 
             $neighbours = array_filter($neighbours, function ($v) {
                 /**@var Cell|null $v */

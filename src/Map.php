@@ -47,6 +47,36 @@ class Map
         $this->matrix = $generator->generate($this->matrix, $this->startPoint);
     }
 
+    public function getEntryCoordinates(): Coordinates
+    {
+        return $this->startPoint->getCoordinates();
+    }
+
+    public function isStartPoint(Coordinates $c): bool
+    {
+        return $this->startPoint->equals($this->matrix->get($c->getRow(), $c->getCol()));
+    }
+
+    public function isEndPoint(Coordinates $c): bool
+    {
+        return $this->endPoint->equals($this->matrix->get($c->getRow(), $c->getCol()));
+    }
+
+    /**
+     * @param Cell $cell
+     * @param VisitedList $visitedList
+     * @return Cell[]|null[]
+     */
+    public function getNeighbourCellsFor(Cell $cell, VisitedList $visitedList): array
+    {
+        return $this->matrix->getNeighboursFor($cell, $visitedList, true);
+    }
+
+    public function getCellAt(Coordinates $coordinates): ?Cell
+    {
+        return $this->matrix->getByCoordinates($coordinates);
+    }
+
     private function pickStartPoint(Matrix $m): Cell
     {
         //picking always from higher-left quarter of matrix

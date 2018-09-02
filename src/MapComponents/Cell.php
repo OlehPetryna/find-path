@@ -19,6 +19,11 @@ class Cell
         $this->type = $type;
     }
 
+    public function getCoordinates(): Coordinates
+    {
+        return new Coordinates($this->getY(), $this->getX());
+    }
+
     public static function createWall(Coordinates $coordinates): self
     {
         return new self($coordinates->getX(), $coordinates->getY(), self::TYPE_WALL);
@@ -41,7 +46,7 @@ class Cell
 
     public function isPassage()
     {
-        return $this->type === self::TYPE_PASSAGE;
+        return $this->type === self::TYPE_PASSAGE || $this->type === self::TYPE_DESTROYED_WALL;
     }
 
     public function getX()
