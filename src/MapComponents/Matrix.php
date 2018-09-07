@@ -106,13 +106,8 @@ class Matrix implements \Iterator
             }
         };
 
-//        echo "neib for " . $c->getUniqueKey() . "\n";
-
         foreach ($haystack as $cell) {
             /**@var Cell $cell */
-
-//            echo "searching through - " . $cell->getUniqueKey() . "\n";
-
             if ($modeCondition($c, $cell)) {
                 return $cell;
             }

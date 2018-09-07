@@ -15,6 +15,5 @@ $runner->enter($m);
 $res = $runner->findWayOut();
 
 echo "\n";
-echo "\n";
 
 \App\Console::drawRunnerTrace($m, $res);

@@ -64,7 +64,6 @@ class MazeRunner
      */
     public function pickRandomPoint(array $cells): Coordinates
     {
-//        echo "pick random from " . count($cells) . "\n";
         return $cells[array_keys($cells)[random_int(0, count($cells) - 1)]]->getCoordinates();
     }
 
