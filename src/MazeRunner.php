@@ -19,7 +19,7 @@ class MazeRunner
         $this->maze = $map;
     }
 
-    public function findWayOut(): array
+    public function findWayOut(): MazeRunnerTrace
     {
         $this->position = $this->maze->getEntryCoordinates();
 
@@ -29,7 +29,8 @@ class MazeRunner
         $movesStack->push($this->position);
         $visited->add($this->maze->getCellAt($this->position));
 
-        $trace = [$this->position->getRow() . "-" . $this->position->getCol() => $this->position];
+        $trace = new MazeRunnerTrace();
+        $trace->add($this->position);
 
         while (!$this->isAtEnd($this->position)) {
             $neibs = array_filter($this->maze->getNeighbourCellsFor($this->maze->getCellAt($this->position), $visited),
@@ -44,15 +45,14 @@ class MazeRunner
                 $visited->add($this->maze->getCellAt($nextPosition));
 
                 $this->position = $nextPosition;
-                $trace[$this->position->getRow() . "-" . $this->position->getCol()] = $this->position;
+                $trace->add($this->position);
             } elseif (!$movesStack->isEmpty()) {
                 $this->position = $movesStack->pop();
             } else {
                 throw new \Exception("Unreachable statement");
             }
         }
-
-        $trace[$this->position->getRow() . "-" . $this->position->getCol()] = $this->position;
+        $trace->add($this->position);
 
         return $trace;
     }

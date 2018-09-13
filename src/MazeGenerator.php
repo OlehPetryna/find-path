@@ -47,7 +47,11 @@ class MazeGenerator
                 $nextPoint = $neighbours[array_keys($neighbours)[random_int(0, count($neighbours) - 1)]];
 
                 $removeWallsBetween = $this->removeWallsBetween($currentPoint, $nextPoint);
-                $matrix->set($removeWallsBetween, Cell::createDestroyedWall($removeWallsBetween));
+
+//                var_dump([$removeWallsBetween, $startPoint, $nextPoint]);
+
+                if ($removeWallsBetween !== null)
+                    $matrix->set($removeWallsBetween, Cell::createDestroyedWall($removeWallsBetween));
 
                 $currentPoint = $nextPoint;
                 $this->markAsVisited($currentPoint);
@@ -62,7 +66,7 @@ class MazeGenerator
     }
 
 
-    private function removeWallsBetween(Cell $a, Cell $b): Coordinates
+    private function removeWallsBetween(Cell $a, Cell $b): ?Coordinates
     {
         $newCoordinates = $a->getX() === $b->getX()
             ? Coordinates::fromArray([
@@ -74,7 +78,11 @@ class MazeGenerator
                 'col' => min($a->getX(), $b->getX()) + abs($a->getX() - $b->getX()) - 1
             ]);
 
-        return $newCoordinates;
+        return
+            ($a->getCoordinates()->getCol() === $newCoordinates->getCol() && $a->getCoordinates()->getRow() === $newCoordinates->getRow())
+            || ($b->getCoordinates()->getCol() === $newCoordinates->getCol() && $b->getCoordinates()->getRow() === $newCoordinates->getRow())
+            ? null
+            : $newCoordinates;
     }
 
     private function markAsVisited(Cell $cell): void

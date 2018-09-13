@@ -19,14 +19,14 @@ class Console
         }
     }
 
-    public static function drawRunnerTrace(Map $map, array $trace)
+    public static function drawRunnerTrace(Map $map, MazeRunnerTrace $trace)
     {
         foreach ($map->matrix as $rowIdx => $row) {
             foreach ($row as $colIdx => $col) {
                 $c = $map->matrix->get($rowIdx, $colIdx);
 
                 $char = $c->isWall() ? "|" : "*";
-                if (in_array($c->getCoordinates(), $trace))
+                if ($trace->contains($c->getCoordinates()))
                     $char = "1";
 
                 if ($map->isStartPoint($c->getCoordinates()))

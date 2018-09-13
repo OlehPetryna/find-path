@@ -82,16 +82,22 @@ class Map
         //picking always from higher-left quarter of matrix
         $point = null;
 
-        $widthBoundary = (int)floor($this->getWidth() / 2);
-        $heightBoundary = (int)floor($this->getHeight() / 2);
+        $widthBoundary = (int)$this->getWidth();
         while ($point === null) {
-            $row = random_int(1, $heightBoundary);
-            $col = random_int(1, $widthBoundary);
+            $row = 0;
+            $col = random_int(1, $widthBoundary - 1);
 
             $cell = $m->get($row, $col);
-            if ($cell && $cell->isPassage())
+            $nextCell = $m->get($row + 1, $col);
+
+//            var_dump([$cell, $nextCell]);
+
+            if ($cell && $nextCell && $nextCell->isPassage())
                 $point = $cell;
         }
+
+        $point->type = Cell::TYPE_PASSAGE;
+        $m->set($point->getCoordinates(), $point);
 
         return $point;
     }
@@ -101,16 +107,22 @@ class Map
         //picking always from lower-right quarter of matrix
         $point = null;
 
-        $widthBoundary = (int)floor($this->getWidth() / 2);
-        $heightBoundary =(int)floor($this->getHeight() / 2);
+        $widthBoundary = (int)$this->getWidth();
         while ($point === null) {
-            $row = random_int($heightBoundary, $this->getHeight());
-            $col = random_int($widthBoundary, $this->getWidth());
+            $row = $this->getHeight() - 1;
+            $col = random_int(1, $widthBoundary - 1);
 
             $cell = $m->get($row, $col);
-            if ($cell && $cell->isPassage())
+            $nextCell = $m->get($row - 1, $col);
+
+//            var_dump([$cell, $nextCell]);
+
+            if ($cell && $nextCell && $nextCell->isPassage())
                 $point = $cell;
         }
+
+        $point->type = Cell::TYPE_PASSAGE;
+        $m->set($point->getCoordinates(), $point);
 
         return $point;
     }
